@@ -1,5 +1,14 @@
 "use client";
 
+
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Home Tuition in Jhansi & Indore | EduNest",
+  description:
+    "Find trusted home tutors and online tutors in Jhansi and Indore for Nursery to Class 12, CBSE, ICSE, Navodaya, Sainik School, IIT-JEE, and NEET preparation with EduNest.",
+};
+
 import React, { FormEvent, useMemo, useState } from "react";
 import Image from "next/image";
 import {
@@ -24,14 +33,13 @@ import {
   Database,
 } from "lucide-react";
 
-const SITE_URL = "https://edunest.org.in"; 
 const WHATSAPP_NUMBER = "916389186996";
 const PRIMARY_PHONE = "6389186996";
 const SECONDARY_PHONE = "8869987481";
 const SECONDARY_CONTACT_NAME = "Abhishek Yadav";
 const INSTAGRAM_URL =
   "https://www.instagram.com/edunest.classes?igsh=MWo4bng5am9iMTFhaQ==";
-const CLIENT_EMAIL = "edunesthometuition@gmail.com"; 
+const CLIENT_EMAIL = "";
 const LOGO_PATH = "/edunest-logo.jpeg";
 const HERO_IMAGE = "/images/hero-cutout.png";
 
@@ -515,20 +523,6 @@ export default function EduNestHomePage() {
     []
   );
 
-  const structuredData = {
-    "@context": "https://schema.org",
-    "@type": "EducationalOrganization",
-    name: "EduNest",
-    url: SITE_URL,
-    logo: `${SITE_URL}/edunest-logo.jpeg`,
-    description:
-      "EduNest helps parents find trusted home tutors and online tutors in Jhansi and Indore for Nursery to Class 12, CBSE, ICSE, Navodaya, Sainik School, IIT-JEE, and NEET preparation.",
-    telephone: `+91-${PRIMARY_PHONE}`,
-    email: CLIENT_EMAIL,
-    areaServed: ["Jhansi", "Indore"],
-    sameAs: [INSTAGRAM_URL],
-  };
-
   const handleParentSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setParentError("");
@@ -593,6 +587,15 @@ Additional Message: ${parentForm.message || "Not provided"}`;
 
       setParentSuccess("Your enquiry has been saved successfully. WhatsApp will open now.");
       window.open(buildWhatsAppLink(message), "_blank", "noopener,noreferrer");
+
+      if (CLIENT_EMAIL) {
+        const mailto = `mailto:${CLIENT_EMAIL}?subject=${encodeURIComponent(
+          "New Student Enquiry - EduNest"
+        )}&body=${encodeURIComponent(message)}`;
+        setTimeout(() => {
+          window.location.href = mailto;
+        }, 300);
+      }
 
       setParentForm(initialParentForm);
     } catch (error) {
@@ -686,6 +689,15 @@ Resume: ${
       setTeacherSuccess("Your application has been saved successfully. WhatsApp will open now.");
       window.open(buildWhatsAppLink(message), "_blank", "noopener,noreferrer");
 
+      if (CLIENT_EMAIL) {
+        const mailto = `mailto:${CLIENT_EMAIL}?subject=${encodeURIComponent(
+          "New Tutor Application - EduNest"
+        )}&body=${encodeURIComponent(message)}`;
+        setTimeout(() => {
+          window.location.href = mailto;
+        }, 300);
+      }
+
       setTeacherForm(initialTeacherForm);
     } catch (error) {
       setTeacherError(
@@ -700,11 +712,6 @@ Resume: ${
 
   return (
     <div className="min-h-screen text-slate-900" style={{ background: BRAND.bg }}>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-      />
-
       <div className="fixed inset-x-0 top-0 z-50 border-b border-white/60 bg-white/85 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
           <a href="#home" className="shrink-0">
@@ -795,6 +802,7 @@ Resume: ${
                 className="mt-6 max-w-2xl text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl lg:text-6xl"
                 style={{ color: BRAND.text }}
               >
+                {/* Find Expert Tutors for Home Tuition, School Preparation, and Competitive Exams */}
                 Find the Right Tutor for Every Stage of Learning
               </h1>
 
@@ -811,11 +819,9 @@ Resume: ${
                 <span className="font-semibold text-slate-800">Indore</span>.
               </p>
 
-              <div
-                className="mt-4 inline-flex w-fit items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm ring-1 ring-slate-200"
-                style={{ background: BRAND.secondary }}
-              >
+              <div className="mt-4 inline-flex w-fit items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm ring-1 ring-slate-200"   style={{ background: BRAND.secondary }}>
                 <Home className="h-4 w-4" style={{ color: BRAND.text }} />
+                {/* One click to connect with the best home tutor for your child. */}
                 Get the best home tutor for your child at your doorstep
               </div>
 
@@ -850,14 +856,6 @@ Resume: ${
                 >
                   <MessageCircle className="h-4 w-4" />
                   Chat on WhatsApp
-                </a>
-
-                <a
-                  href={CLIENT_EMAIL ? `mailto:${CLIENT_EMAIL}` : "#"}
-                  className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm ring-1 ring-slate-200 transition hover:bg-slate-50"
-                >
-                  <Mail className="h-4 w-4" />
-                  {CLIENT_EMAIL}
                 </a>
 
                 <a
@@ -1526,11 +1524,6 @@ Resume: ${
                       Chat on WhatsApp
                     </a>
                   </div>
-
-                  <p className="mt-3 text-xs leading-6 text-slate-500">
-                    By submitting this form, you agree to be contacted by EduNest via phone, email, or WhatsApp.
-                    Your details are kept private and used only for tutor matching and support.
-                  </p>
                 </form>
               </div>
             ) : (
@@ -1749,11 +1742,6 @@ Resume: ${
                       WhatsApp EduNest
                     </a>
                   </div>
-
-                  <p className="mt-3 text-xs leading-6 text-slate-500">
-                    By submitting this form, you agree to be contacted by EduNest via phone, email, or WhatsApp.
-                    Your details are kept private and used only for tutor matching and support.
-                  </p>
                 </form>
               </div>
             )}
@@ -1857,12 +1845,6 @@ Resume: ${
                 <Phone className="h-4 w-4" /> {SECONDARY_CONTACT_NAME}: {SECONDARY_PHONE}
               </a>
               <a
-                href={`mailto:${CLIENT_EMAIL}`}
-                className="flex items-center gap-3 transition hover:text-white"
-              >
-                <Mail className="h-4 w-4" /> {CLIENT_EMAIL}
-              </a>
-              <a
                 href={`https://wa.me/${WHATSAPP_NUMBER}`}
                 target="_blank"
                 rel="noreferrer"
@@ -1887,14 +1869,14 @@ Resume: ${
 
         <div className="border-t border-white/10 px-4 py-5 text-center text-sm text-white/50 sm:px-6 lg:px-8">
           © {new Date().getFullYear()} EduNest. All rights reserved. Designed & Developed by{" "}
-          <a
-            href="https://rewantechsolutions.com"
-            target="_blank"
-            rel="noreferrer"
-            className="font-medium text-white/70 transition hover:text-white"
-          >
-            Rewan Tech Solutions
-          </a>
+  <a
+    href="https://rewantechsolutions.com"
+    target="_blank"
+    rel="noreferrer"
+    className="font-medium text-white/70 transition hover:text-white"
+  >
+    Rewan Tech Solutions
+  </a>
         </div>
       </footer>
 
