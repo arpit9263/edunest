@@ -438,7 +438,7 @@ function EduNestLogo({ footer = false }: { footer?: boolean }) {
           EduNest
         </div>
         <div className={`text-xs font-medium ${footer ? "text-white/70" : "text-slate-500"}`}>
-          Home Tuition Platform
+          Home & Online Tuition Platform
         </div>
       </div>
     </div>
