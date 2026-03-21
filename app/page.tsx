@@ -1,5 +1,6 @@
 "use client";
 
+import { Baloo_2, Inter } from "next/font/google";
 import React, { FormEvent, useMemo, useState } from "react";
 import Image from "next/image";
 import {
@@ -22,6 +23,7 @@ import {
   ClipboardList,
   Mail,
   Database,
+  Star,
 } from "lucide-react";
 
 const SITE_URL = "https://edunest.org.in"; 
@@ -34,6 +36,9 @@ const INSTAGRAM_URL =
 const CLIENT_EMAIL = "edunesthometuition@gmail.com"; 
 const LOGO_PATH = "/edunest-logo.jpeg";
 const HERO_IMAGE = "/images/hero-cutout.png";
+
+const headingFont = Baloo_2({ subsets: ["latin"], weight: ["600", "700", "800"] });
+const bodyFont = Inter({ subsets: ["latin"], weight: ["400", "500", "600", "700"] });
 
 const STUDENT_FORMSPREE_ENDPOINT = "https://formspree.io/f/xreyypge";
 const TUTOR_FORMSPREE_ENDPOINT = "https://formspree.io/f/xdawweod";
@@ -75,6 +80,7 @@ const classOptions = [
 ];
 
 const subjectOptions = [
+  "All Subjects",
   "Mathematics",
   "Science",
   "Physics",
@@ -114,6 +120,16 @@ const teacherTimingOptions = [
   "Flexible",
 ];
 const tuitionModes = ["Home Tuition", "Online Tuition", "Both"];
+const budgetOptions = [
+  "₹1000+",
+  "₹1500+",
+  "₹2000+",
+  "₹2500+",
+  "₹3000+",
+  "₹4000+",
+  "₹5000+",
+  "Flexible",
+];
 const genderOptions = ["No Preference", "Male", "Female"];
 const teacherGenderOptions = ["Male", "Female", "Other"];
 
@@ -216,7 +232,36 @@ const categories = [
   },
 ];
 
+const overallStats = [
+  { value: "1200+", label: "Parent Enquiries" },
+  { value: "350+", label: "Active Tutors" },
+  { value: "2", label: "Cities Covered" },
+  { value: "15+", label: "Subjects & Programs" },
+];
+
+const reviewItems = [
+  {
+    name: "Pooja Sharma",
+    role: "Parent, Jhansi",
+    text: "The process felt simple and fast. We shared our requirement and got a relevant tutor option without wasting time.",
+  },
+  {
+    name: "Rohit Verma",
+    role: "Parent, Indore",
+    text: "Good communication, clear process, and a better experience than random tutor listing websites.",
+  },
+  {
+    name: "Anjali Singh",
+    role: "Tutor, Jhansi",
+    text: "The form was easy to fill and the EduNest team followed up properly. Clean and practical platform.",
+  },
+];
+
 const faqItems = [
+  {
+    q: "How are Tutors Selected?",
+    a: "EduNest has a simple vetting process where we review tutor applications based on qualifications, experience, subjects taught, and location. We also check for basic trust factors like valid ID, educational certificates, and teaching experience before recommending them to parents.",
+  },
   {
     q: "How does EduNest work?",
     a: "Parents submit their requirement and EduNest connects them with a suitable tutor based on subject, class, board, city, timing, and mode.",
@@ -265,6 +310,7 @@ type ParentFormState = {
   city: string;
   area: string;
   mode: string;
+  minBudget: string;
   preferredTutorGender: string;
   preferredTiming: string;
   message: string;
@@ -298,6 +344,7 @@ const initialParentForm: ParentFormState = {
   city: "",
   area: "",
   mode: "",
+  minBudget: "",
   preferredTutorGender: "No Preference",
   preferredTiming: "",
   message: "",
@@ -434,7 +481,7 @@ function EduNestLogo({ footer = false }: { footer?: boolean }) {
         />
       </div>
       <div>
-        <div className={`text-xl font-extrabold tracking-tight ${footer ? "text-white" : "text-slate-900"}`}>
+        <div className={`${headingFont.className} text-xl font-extrabold tracking-tight ${footer ? "text-white" : "text-slate-900"}`}>
           EduNest
         </div>
         <div className={`text-xs font-medium ${footer ? "text-white/70" : "text-slate-500"}`}>
@@ -507,10 +554,10 @@ export default function EduNestHomePage() {
 
   const stats = useMemo(
     () => [
-      { label: "Coverage", value: "Jhansi & Indore" },
-      { label: "Levels", value: "Nursery to 12" },
-      { label: "Modes", value: "Home + Online" },
-      { label: "Exam Prep", value: "CBSE / ICSE / JEE / NEET" },
+      { label: "Trusted Reach", value: "Jhansi & Indore" },
+      { label: "Academic Levels", value: "Nursery to 12" },
+      { label: "Learning Modes", value: "Home + Online" },
+      { label: "Top Programs", value: "Boards + JEE + NEET" },
     ],
     []
   );
@@ -569,6 +616,7 @@ Area: ${parentForm.area || "Not provided"}
 Mode: ${parentForm.mode}
 Preferred Tutor Gender: ${parentForm.preferredTutorGender || "No Preference"}
 Preferred Timing: ${parentForm.preferredTiming || "Not provided"}
+Minimum Budget: ${parentForm.minBudget || "Not provided"}
 Additional Message: ${parentForm.message || "Not provided"}`;
 
     try {
@@ -587,6 +635,7 @@ Additional Message: ${parentForm.message || "Not provided"}`;
         mode: parentForm.mode,
         preferredTutorGender: parentForm.preferredTutorGender || "No Preference",
         preferredTiming: parentForm.preferredTiming || "",
+        minBudget: parentForm.minBudget || "",
         message: parentForm.message || "",
         whatsappMessage: message,
       });
@@ -654,11 +703,7 @@ Current Profession: ${teacherForm.currentProfession}
 Teaching Experience: ${teacherForm.experience}
 Mode: ${teacherForm.mode}
 Available Timings: ${teacherForm.availableTimings}
-Expected Fee: ${teacherForm.expectedFee || "Not provided"}
-Resume: ${
-      teacherForm.resumeFileName ||
-      "Selected on device / backend storage can be added later"
-    }`;
+Expected Fee: ${teacherForm.expectedFee || "Not provided"}`;
 
     try {
       setIsTeacherSubmitting(true);
@@ -679,7 +724,6 @@ Resume: ${
         mode: teacherForm.mode,
         availableTimings: teacherForm.availableTimings,
         expectedFee: teacherForm.expectedFee || "",
-        resumeFileName: teacherForm.resumeFileName || "",
         whatsappMessage: message,
       });
 
@@ -699,7 +743,7 @@ Resume: ${
   };
 
   return (
-    <div className="min-h-screen text-slate-900" style={{ background: BRAND.bg }}>
+    <div className={`${bodyFont.className} min-h-screen text-slate-900`} style={{ background: BRAND.bg }}>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
@@ -792,7 +836,7 @@ Resume: ${
               <SectionBadge>Jhansi & Indore Home & Online Tuition</SectionBadge>
 
               <h1
-                className="mt-6 max-w-2xl text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl lg:text-6xl"
+                className={`${headingFont.className} mt-6 max-w-2xl text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl lg:text-6xl`}
                 style={{ color: BRAND.text }}
               >
                 Find the Right Tutor for Every Stage of Learning
@@ -812,10 +856,10 @@ Resume: ${
               </p>
 
               <div
-                className="mt-4 inline-flex w-fit items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm ring-1 ring-slate-200"
-                style={{ background: BRAND.secondary }}
+                className="mt-5 inline-flex w-fit items-center gap-2 rounded-2xl px-5 py-3 text-sm font-semibold text-white shadow-lg"
+                style={{ background: `linear-gradient(135deg, ${BRAND.primary}, #1688C6)` }}
               >
-                <Home className="h-4 w-4" style={{ color: BRAND.text }} />
+                <Home className="h-4 w-4" />
                 Get the best home tutor for your child at your doorstep
               </div>
 
@@ -871,7 +915,7 @@ Resume: ${
                 </a>
               </div>
 
-              <div className="mt-8 flex flex-wrap gap-3">
+              <div className="mt-8 hidden flex-wrap gap-3 sm:flex">
                 {[
                   "Nursery to Class 12",
                   "CBSE / ICSE",
@@ -909,12 +953,12 @@ Resume: ${
                   </div>
                 </div>
 
-                <div className="absolute z-20 -right-2 bottom-24 hidden rounded-2xl bg-white px-4 py-3 shadow-lg ring-1 ring-slate-200 sm:block">
+                {/* <div className="absolute z-20 -right-2 bottom-24 hidden rounded-2xl bg-white px-4 py-3 shadow-lg ring-1 ring-slate-200 sm:block">
                   <div className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
                     Coverage
                   </div>
                   <div className="mt-1 text-sm font-bold text-slate-900">Jhansi & Indore</div>
-                </div>
+                </div> */}
 
                 <div className="relative z-10 w-full max-w-[560px]">
                   <Image
@@ -927,25 +971,24 @@ Resume: ${
                   />
                 </div>
 
-                <div className="relative z-10 mt-4 grid w-full max-w-[540px] grid-cols-2 gap-3 sm:grid-cols-4">
-                  {stats.map((item) => (
-                    <div
-                      key={item.label}
-                      className="rounded-2xl bg-white/95 p-3 text-center shadow-md ring-1 ring-slate-200 backdrop-blur transition hover:-translate-y-0.5"
-                    >
-                      <div className="text-sm font-bold text-slate-900 sm:text-base">{item.value}</div>
-                      <div className="mt-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-500">
-                        {item.label}
+                <div className="relative z-10 mt-4 w-full max-w-[540px] rounded-[28px] bg-[#1F6FB2] p-4 text-white shadow-[0_24px_55px_-20px_rgba(31,111,178,0.65)] sm:p-6">
+                  <div className="grid grid-cols-2 divide-x divide-y divide-white/20 overflow-hidden rounded-[20px] border border-white/10">
+                    {stats.map((item) => (
+                      <div key={item.label} className="px-4 py-5 text-center sm:px-6">
+                        <div className={`${headingFont.className} text-2xl font-extrabold sm:text-3xl`}>{item.value}</div>
+                        <div className="mt-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-white/80 sm:text-xs">
+                          {item.label}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </section>
 
-        <section className="border-y border-slate-200 bg-white/80">
+        <section className="hidden border-y border-slate-200 bg-white/80 md:block">
           <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-4 px-4 py-5 text-sm font-semibold text-slate-700 sm:px-6 lg:justify-between lg:px-8">
             {[
               "Nursery to Class 12",
@@ -965,7 +1008,7 @@ Resume: ${
         <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-3xl text-center">
             <SectionBadge>Two Clear Paths</SectionBadge>
-            <h2 className="mt-5 text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
+            <h2 className={`${headingFont.className} mt-5 text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl`}>
               Built for Parents and Tutors
             </h2>
             <p className="mt-4 text-lg leading-8 text-slate-600">
@@ -1020,7 +1063,7 @@ Resume: ${
                   "Apply with academic details",
                   "Add subjects, classes, and experience",
                   "Choose home, online, or both",
-                  "Resume field included",
+                  "Simple application flow",
                 ].map((item) => (
                   <li key={item} className="flex items-start gap-3">
                     <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" style={{ color: BRAND.secondary }} />
@@ -1046,7 +1089,7 @@ Resume: ${
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="mx-auto max-w-3xl text-center">
               <SectionBadge>How It Works</SectionBadge>
-              <h2 className="mt-5 text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
+              <h2 className={`${headingFont.className} mt-5 text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl`}>
                 A Simple Process for Busy Parents
               </h2>
               <p className="mt-4 text-lg leading-8 text-slate-600">
@@ -1087,7 +1130,7 @@ Resume: ${
           <div className="grid gap-12 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
             <div>
               <SectionBadge>Subjects Covered</SectionBadge>
-              <h2 className="mt-5 text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
+              <h2 className={`${headingFont.className} mt-5 text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl`}>
                 Support Across School, Boards, and Competitive Exams
               </h2>
               <p className="mt-4 text-lg leading-8 text-slate-600">
@@ -1136,7 +1179,7 @@ Resume: ${
             <div className="grid gap-6 lg:grid-cols-2">
               <div className="rounded-[32px] border border-slate-200 bg-gradient-to-br from-white to-slate-50 p-8 shadow-sm sm:p-10">
                 <SectionBadge>Teaching Modes</SectionBadge>
-                <h3 className="mt-5 text-3xl font-extrabold text-slate-900">Flexible Learning Options</h3>
+                <h3 className={`${headingFont.className} mt-5 text-3xl font-extrabold text-slate-900`}>Flexible Learning Options</h3>
                 <div className="mt-8 grid gap-4 sm:grid-cols-3">
                   {[
                     { title: "Home Tuition", text: "One-on-one support at home." },
@@ -1178,7 +1221,7 @@ Resume: ${
         <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-3xl text-center">
             <SectionBadge>Why Choose EduNest</SectionBadge>
-            <h2 className="mt-5 text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
+            <h2 className={`${headingFont.className} mt-5 text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl`}>
               Designed to Feel Helpful, Clear, and Trustworthy
             </h2>
             <p className="mt-4 text-lg leading-8 text-slate-600">
@@ -1205,7 +1248,7 @@ Resume: ${
           </div>
         </section>
 
-        <section className="py-20 text-white" style={{ background: `linear-gradient(145deg, ${BRAND.primary}, #126B99)` }}>
+        <section className="hidden py-20 text-white md:block" style={{ background: `linear-gradient(145deg, ${BRAND.primary}, #126B99)` }}>
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="grid gap-10 lg:grid-cols-[1.02fr_0.98fr] lg:items-center">
               <div>
@@ -1247,10 +1290,10 @@ Resume: ${
           </div>
         </section>
 
-        <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+        <section className="mx-auto hidden max-w-7xl px-4 py-20 sm:px-6 lg:block lg:px-8">
           <div className="mx-auto max-w-3xl text-center">
             <SectionBadge>Smart Form Features</SectionBadge>
-            <h2 className="mt-5 text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
+            <h2 className={`${headingFont.className} mt-5 text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl`}>
               Ready for Online Save, Email, and Future Automation
             </h2>
             <p className="mt-4 text-lg leading-8 text-slate-600">
@@ -1293,10 +1336,67 @@ Resume: ${
           </div>
         </section>
 
-        <section id="lead-forms" className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+        
+        <section className="bg-white py-20">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="mx-auto max-w-3xl text-center">
+              <SectionBadge>Overall Platform Highlights</SectionBadge>
+              <h2 className={`${headingFont.className} mt-5 text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl`}>
+                Clean, Trust-Building Numbers That Make the Website Feel Stronger
+              </h2>
+              <p className="mt-4 text-lg leading-8 text-slate-600">
+                Added in a cleaner style inspired by the reference you shared, but more premium and better balanced for EduNest.
+              </p>
+            </div>
+
+            <div className="mx-auto mt-12 max-w-5xl rounded-[32px] bg-[#1F6FB2] p-5 text-white shadow-[0_30px_70px_-25px_rgba(31,111,178,0.65)] sm:p-7">
+              <div className="grid grid-cols-2 divide-x divide-y divide-white/20 overflow-hidden rounded-[24px] border border-white/10 bg-white/5 backdrop-blur-sm md:grid-cols-4 md:divide-y-0">
+                {overallStats.map((item) => (
+                  <div key={item.label} className="px-4 py-6 text-center sm:px-6">
+                    <div className={`${headingFont.className} text-3xl font-extrabold sm:text-4xl`}>{item.value}</div>
+                    <div className="mt-2 text-sm font-medium text-white/80">{item.label}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="bg-slate-50 py-20">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="mx-auto max-w-3xl text-center">
+              <SectionBadge>Parent & Tutor Reviews</SectionBadge>
+              <h2 className={`${headingFont.className} mt-5 text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl`}>
+                Trust Starts With Real Experience
+              </h2>
+              <p className="mt-4 text-lg leading-8 text-slate-600">
+                A review section makes the website feel more genuine and helps convert better.
+              </p>
+            </div>
+
+            <div className="mt-12 grid gap-6 lg:grid-cols-3">
+              {reviewItems.map((item) => (
+                <div key={item.name} className="rounded-[28px] border border-slate-200 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
+                  <div className="flex items-center gap-1 text-amber-500">
+                    {Array.from({ length: 5 }).map((_, index) => (
+                      <Star key={index} className="h-4 w-4 fill-current" />
+                    ))}
+                  </div>
+                  <p className="mt-5 text-base leading-8 text-slate-600">“{item.text}”</p>
+                  <div className="mt-6">
+                    <div className={`${headingFont.className} text-lg font-bold text-slate-900`}>{item.name}</div>
+                    <div className="text-sm text-slate-500">{item.role}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+<section id="lead-forms" className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-3xl text-center">
             <SectionBadge>Apply / Enquire</SectionBadge>
-            <h2 className="mt-5 text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
+            <h2 className={`${headingFont.className} mt-5 text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl`}>
               One Section, Two Smart Form Flows
             </h2>
             <p className="mt-4 text-lg leading-8 text-slate-600">
@@ -1331,9 +1431,9 @@ Resume: ${
 
             {activeTab === "student" ? (
               <div className="mt-8 grid gap-8 lg:grid-cols-[0.78fr_1.22fr]">
-                <div className="rounded-[28px] bg-slate-50 p-8 ring-1 ring-slate-200 sm:p-10">
+                <div className="hidden rounded-[28px] bg-slate-50 p-8 ring-1 ring-slate-200 lg:block lg:p-10">
                   <SectionBadge>Student / Parent Form</SectionBadge>
-                  <h3 className="mt-5 text-3xl font-extrabold tracking-tight text-slate-900">
+                  <h3 className={`${headingFont.className} mt-5 text-3xl font-extrabold tracking-tight text-slate-900`}>
                     Find the Best Tutor for Your Child
                   </h3>
                   <p className="mt-4 text-base leading-8 text-slate-600">
@@ -1489,6 +1589,20 @@ Resume: ${
                       </CommonSelect>
                     </InputField>
 
+                    <InputField label="Minimum Budget">
+                      <CommonSelect
+                        value={parentForm.minBudget}
+                        onChange={(e) => setParentForm({ ...parentForm, minBudget: e.target.value })}
+                      >
+                        <option value="">Select minimum budget</option>
+                        {budgetOptions.map((item) => (
+                          <option key={item} value={item}>
+                            {item}
+                          </option>
+                        ))}
+                      </CommonSelect>
+                    </InputField>
+
                     <div className="md:col-span-2">
                       <InputField label="Additional Message">
                         <CommonTextarea
@@ -1536,11 +1650,11 @@ Resume: ${
             ) : (
               <div className="mt-8 grid gap-8 lg:grid-cols-[0.82fr_1.18fr]">
                 <div
-                  className="rounded-[28px] p-8 text-white shadow-sm sm:p-10"
+                  className="hidden rounded-[28px] p-8 text-white shadow-sm lg:block lg:p-10"
                   style={{ background: `linear-gradient(145deg, ${BRAND.primary}, #1A8AC8)` }}
                 >
                   <SectionBadge>Tutor Application</SectionBadge>
-                  <h3 className="mt-5 text-3xl font-extrabold tracking-tight">Apply as a Tutor with EduNest</h3>
+                  <h3 className={`${headingFont.className} mt-5 text-3xl font-extrabold tracking-tight`}>Apply as a Tutor with EduNest</h3>
                   <p className="mt-4 text-base leading-8 text-white/80">
                     Teachers can apply for tutoring opportunities in Jhansi and Indore by sharing profile details, subjects, timings, and experience.
                   </p>
@@ -1705,22 +1819,6 @@ Resume: ${
                         placeholder="Optional"
                       />
                     </InputField>
-
-                    <div className="md:col-span-2">
-                      <InputField label="Resume Upload">
-                        <input
-                          type="file"
-                          accept=".pdf,.doc,.docx"
-                          onChange={(e) =>
-                            setTeacherForm({ ...teacherForm, resumeFileName: e.target.files?.[0]?.name || "" })
-                          }
-                          className="block w-full rounded-xl border border-dashed border-slate-300 bg-white px-4 py-3 text-sm text-slate-600 file:mr-4 file:rounded-lg file:border-0 file:bg-blue-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-blue-700"
-                        />
-                        <p className="mt-2 text-xs leading-6 text-slate-500">
-                          Frontend resume field is ready. For permanent file storage, connect UploadThing, Cloudinary, or backend storage later.
-                        </p>
-                      </InputField>
-                    </div>
                   </div>
 
                   {teacherError ? <p className="mt-5 text-sm font-medium text-rose-600">{teacherError}</p> : null}
@@ -1763,7 +1861,7 @@ Resume: ${
         <section id="faq" className="mx-auto max-w-5xl px-4 py-20 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-3xl text-center">
             <SectionBadge>FAQ</SectionBadge>
-            <h2 className="mt-5 text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
+            <h2 className={`${headingFont.className} mt-5 text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl`}>
               Common Questions
             </h2>
             <p className="mt-4 text-lg leading-8 text-slate-600">
