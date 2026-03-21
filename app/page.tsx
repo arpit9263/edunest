@@ -1,7 +1,7 @@
 "use client";
 
 import { Baloo_2, Inter } from "next/font/google";
-import React, { FormEvent, useMemo, useState } from "react";
+import React, { FormEvent, useMemo, useState ,useRef,useEffect} from "react";
 import Image from "next/image";
 import {
   ArrowRight,
@@ -232,12 +232,12 @@ const categories = [
   },
 ];
 
-const overallStats = [
-  { value: "1200+", label: "Parent Enquiries" },
-  { value: "350+", label: "Active Tutors" },
-  { value: "2", label: "Cities Covered" },
-  { value: "15+", label: "Subjects & Programs" },
-];
+// const overallStats = [
+//   { value: "1200+", label: "Parent Enquiries" },
+//   { value: "350+", label: "Active Tutors" },
+//   { value: "2", label: "Cities Covered" },
+//   { value: "15+", label: "Subjects & Programs" },
+// ];
 
 const reviewItems = [
   {
@@ -297,6 +297,10 @@ const faqItems = [
   {
     q: "Do you show tutors publicly on the website?",
     a: "Not right now. EduNest currently follows a lead-based matching model instead of a public tutor listing system.",
+  },
+  {
+    q: "What If I am not satisfied?",
+    a: "NO Worry's We Provide Quick Tutor Replacement if you are not satisfied with the tutor. Just Contact us on WhatsApp or Call us and we will provide you with another tutor option as soon as possible.",
   },
 ];
 
@@ -398,6 +402,79 @@ async function submitToFormspree(
   return data;
 }
 
+function CountUp({
+  end,
+  duration = 1800,
+  suffix = "",
+}: {
+  end: number;
+  duration?: number;
+  suffix?: string;
+}) {
+  const [count, setCount] = useState(0);
+  const [start, setStart] = useState(false);
+  const ref = useRef<HTMLDivElement | null>(null);
+  const hasAnimated = useRef(false);
+
+  useEffect(() => {
+    const node = ref.current;
+    if (!node) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !hasAnimated.current) {
+          setStart(true);
+          hasAnimated.current = true;
+        }
+      },
+      { threshold: 0.35 }
+    );
+
+    observer.observe(node);
+
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!start) return;
+
+    let startTime: number | null = null;
+    let animationFrame: number;
+
+    const animate = (timestamp: number) => {
+      if (!startTime) startTime = timestamp;
+      const progress = Math.min((timestamp - startTime) / duration, 1);
+
+      const easeOut = 1 - Math.pow(1 - progress, 3);
+      setCount(Math.floor(easeOut * end));
+
+      if (progress < 1) {
+        animationFrame = requestAnimationFrame(animate);
+      } else {
+        setCount(end);
+      }
+    };
+
+    animationFrame = requestAnimationFrame(animate);
+
+    return () => cancelAnimationFrame(animationFrame);
+  }, [start, end, duration]);
+
+  return (
+    <div ref={ref}>
+      {count}
+      {suffix}
+    </div>
+  );
+}
+
+const overallStats = [
+  { value: 1200, label: "Students Helped", suffix: "+" },
+  { value: 420, label: "Trusted Tutors", suffix: "+" },
+  { value: 98, label: "Parent Satisfaction", suffix: "%" },
+  { value: 24, label: "Support Availability", suffix: "/7" },
+];
+
 function SectionBadge({ children }: { children: React.ReactNode }) {
   return (
     <span
@@ -482,7 +559,7 @@ function EduNestLogo({ footer = false }: { footer?: boolean }) {
       </div>
       <div>
         <div className={`${headingFont.className} text-xl font-extrabold tracking-tight ${footer ? "text-white" : "text-slate-900"}`}>
-          EduNest
+          EDUNEST
         </div>
         <div className={`text-xs font-medium ${footer ? "text-white/70" : "text-slate-500"}`}>
           Home & Online Tuition Platform
@@ -1336,31 +1413,32 @@ Expected Fee: ${teacherForm.expectedFee || "Not provided"}`;
           </div>
         </section>
 
-        
-        <section className="bg-white py-20">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="mx-auto max-w-3xl text-center">
-              <SectionBadge>Overall Platform Highlights</SectionBadge>
-              <h2 className={`${headingFont.className} mt-5 text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl`}>
-                Clean, Trust-Building Numbers That Make the Website Feel Stronger
-              </h2>
-              <p className="mt-4 text-lg leading-8 text-slate-600">
-                Added in a cleaner style inspired by the reference you shared, but more premium and better balanced for EduNest.
-              </p>
-            </div>
+   <section className="bg-white py-20">
+  <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-3xl text-center">
+      <SectionBadge>Overall Platform Highlights</SectionBadge>
+      <h2 className={`${headingFont.className} mt-5 text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl`}>
+        Clean, Trust-Building Numbers That Make the Website Feel Stronger
+      </h2>
+      <p className="mt-4 text-lg leading-8 text-slate-600">
+        Added in a cleaner style inspired by the reference you shared, but more premium and better balanced for EduNest.
+      </p>
+    </div>
 
-            <div className="mx-auto mt-12 max-w-5xl rounded-[32px] bg-[#1F6FB2] p-5 text-white shadow-[0_30px_70px_-25px_rgba(31,111,178,0.65)] sm:p-7">
-              <div className="grid grid-cols-2 divide-x divide-y divide-white/20 overflow-hidden rounded-[24px] border border-white/10 bg-white/5 backdrop-blur-sm md:grid-cols-4 md:divide-y-0">
-                {overallStats.map((item) => (
-                  <div key={item.label} className="px-4 py-6 text-center sm:px-6">
-                    <div className={`${headingFont.className} text-3xl font-extrabold sm:text-4xl`}>{item.value}</div>
-                    <div className="mt-2 text-sm font-medium text-white/80">{item.label}</div>
-                  </div>
-                ))}
-              </div>
+    <div className="mx-auto mt-12 max-w-5xl rounded-[32px] bg-[#1F6FB2] p-5 text-white shadow-[0_30px_70px_-25px_rgba(31,111,178,0.65)] sm:p-7">
+      <div className="grid grid-cols-2 divide-x divide-y divide-white/20 overflow-hidden rounded-[24px] border border-white/10 bg-white/5 backdrop-blur-sm md:grid-cols-4 md:divide-y-0">
+        {overallStats.map((item) => (
+          <div key={item.label} className="px-4 py-6 text-center sm:px-6">
+            <div className={`${headingFont.className} text-3xl font-extrabold sm:text-4xl`}>
+              <CountUp end={item.value} suffix={item.suffix || ""} />
             </div>
+            <div className="mt-2 text-sm font-medium text-white/80">{item.label}</div>
           </div>
-        </section>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
 
         <section className="bg-slate-50 py-20">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
