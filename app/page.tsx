@@ -1868,7 +1868,7 @@ Expected Fee: ${teacherForm.expectedFee || "Not provided"}`;
                   Where We're<br />Making an Impact
                 </h3>
                 <p className="mb-7 mt-2 text-[13px] font-light leading-relaxed text-white/65">
-                  Connecting parents with the right tutors — across two of Pakistan's most active education markets.
+                 Connecting parents with the right tutors in Jhansi and Indore — two of India’s growing education hubs
                 </p>
 
                 <div className="grid flex-1 grid-cols-2 gap-3.5">
