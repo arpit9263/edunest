@@ -643,8 +643,8 @@ function SubjectsTabs() {
               type="button"
               onClick={() => setActiveSubjectTab(tab.key as "school" | "boards" | "exams")}
               className={`rounded-full px-4 py-2 text-sm font-semibold transition ${activeSubjectTab === tab.key
-                  ? "text-white shadow-sm"
-                  : "bg-white text-slate-600 ring-1 ring-slate-200 hover:bg-slate-100"
+                ? "text-white shadow-sm"
+                : "bg-white text-slate-600 ring-1 ring-slate-200 hover:bg-slate-100"
                 }`}
               style={activeSubjectTab === tab.key ? { background: BRAND.primary } : {}}
             >
@@ -1641,10 +1641,10 @@ Expected Fee: ${teacherForm.expectedFee || "Not provided"}`;
                   <div className="absolute right-6 top-6 text-4xl font-black text-slate-100">{item.step}</div>
                   <div
                     className={`inline-flex h-12 w-12 items-center justify-center rounded-2xl ${idx === 0
-                        ? "bg-blue-100 text-blue-700"
-                        : idx === 1
-                          ? "bg-teal-100 text-teal-700"
-                          : "bg-amber-100 text-amber-700"
+                      ? "bg-blue-100 text-blue-700"
+                      : idx === 1
+                        ? "bg-teal-100 text-teal-700"
+                        : "bg-amber-100 text-amber-700"
                       }`}
                   >
                     {idx === 0 ? (
@@ -1818,6 +1818,10 @@ Expected Fee: ${teacherForm.expectedFee || "Not provided"}`;
                       <div
                         key={item.title}
                         className={`group flex cursor-default items-center gap-[18px] py-[18px] ${i < arr.length - 1 ? "border-b border-[#F0F2F6]" : ""}`}
+                        onClick={() => {
+                          setActiveTab("student");
+                          document.getElementById("lead-forms")?.scrollIntoView({ behavior: "smooth" });
+                        }}
                       >
                         <div className={`flex h-[46px] w-[46px] shrink-0 items-center justify-center rounded-[14px] ${item.bg}`}>
                           {item.icon}
@@ -1868,7 +1872,7 @@ Expected Fee: ${teacherForm.expectedFee || "Not provided"}`;
                   Where We're<br />Making an Impact
                 </h3>
                 <p className="mb-7 mt-2 text-[13px] font-light leading-relaxed text-white/65">
-                 Connecting parents with the right tutors in Jhansi and Indore — two of India’s growing education hubs
+                  Connecting parents with the right tutors in Jhansi and Indore — two of India’s growing education hubs
                 </p>
 
                 <div className="grid flex-1 grid-cols-2 gap-3.5">
